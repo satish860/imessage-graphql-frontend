@@ -1,4 +1,4 @@
-import { Button, Center, Stack, Text,Image } from "@chakra-ui/react";
+import { Button, Center, Stack, Text,Image, Input } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 
@@ -16,8 +16,10 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
       <Stack spacing={8} align="center">
         {session ? (
           <>
+          <Text fontSize="3xl">Create a Username</Text>
+           <Input placeholder="Enter a username"></Input>
             <Button onClick={() => signOut()} width="100%">
-              Signout
+              save
             </Button>
           </>
         ) : (
