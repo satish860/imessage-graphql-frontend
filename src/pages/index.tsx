@@ -6,6 +6,7 @@ import { getSession, signIn, signOut, useSession } from "next-auth/react";
 
 export default function Home() {
   const { data: session } = useSession();
+  console.log(session);
   const reloadSession = () => {
     console.log("Hello");
   };
