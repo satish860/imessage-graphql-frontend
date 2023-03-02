@@ -34,6 +34,7 @@ const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       data: searchUsersData,
       loading: searchusersLoading,
       error: searchUsersError,
+      client,
     },
   ] = useLazyQuery<SearchUsersData, SearchUserInputs>(
     SearchOperation.Queries.searchUsers
@@ -41,14 +42,14 @@ const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // Search the User from the API
-    searchUsers({ variables: { username } });
+    if (username) {
+      // Search the User from the API
+      searchUsers({ variables: { username } });
+    }
   };
 
   const addParticipant = (user: SearchedUser) => {
     setParticipants((prev) => [...prev, user]);
-    console.log("New participants added");
     setUsername("");
   };
 
@@ -59,6 +60,8 @@ const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) {
       setParticipants([]);
+      setUsername("");
+
     }
   }, [isOpen]);
 
@@ -80,7 +83,7 @@ const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 width="100%"
                 type="submit"
                 isLoading={searchusersLoading}
-                disabled={!username}
+                isDisabled={username===""}
               >
                 Search
               </Button>
