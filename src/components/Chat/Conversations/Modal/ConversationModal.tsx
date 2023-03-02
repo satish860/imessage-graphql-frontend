@@ -10,8 +10,15 @@ import {
   useDisclosure,
   Stack,
   Input,
+  Text,
+  Flex,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SearchOperation from "./SearchUserQuery";
+import { useLazyQuery } from "@apollo/client";
+import { SearchedUser, SearchUserInputs, SearchUsersData } from "./SearchTypes";
+import UsersList from "./UsersList";
+import Participants from "./Participants";
 
 interface ModalProps {
   isOpen: boolean;
@@ -20,10 +27,40 @@ interface ModalProps {
 
 const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState("");
+  const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
+  const [
+    searchUsers,
+    {
+      data: searchUsersData,
+      loading: searchusersLoading,
+      error: searchUsersError,
+    },
+  ] = useLazyQuery<SearchUsersData, SearchUserInputs>(
+    SearchOperation.Queries.searchUsers
+  );
+
   const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     // Search the User from the API
+    searchUsers({ variables: { username } });
   };
+
+  const addParticipant = (user: SearchedUser) => {
+    setParticipants((prev) => [...prev, user]);
+    console.log("New participants added");
+    setUsername("");
+  };
+
+  const removeParticipant = (userId: string) => {
+    setParticipants((prev) => prev.filter((u) => u.id !== userId));
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setParticipants([]);
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", md: "md" }}>
@@ -39,11 +76,31 @@ const ConversationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 onChange={(event) => setUsername(event.target.value)}
                 value={username}
               ></Input>
-              <Button width="100%" type="submit" disabled={!username}>
+              <Button
+                width="100%"
+                type="submit"
+                isLoading={searchusersLoading}
+                disabled={!username}
+              >
                 Search
               </Button>
             </Stack>
           </form>
+          {searchUsersData?.searchUsers && (
+            <UsersList
+              users={searchUsersData.searchUsers}
+              participants={participants}
+              addParticipant={addParticipant}
+            />
+          )}
+          {participants.length != 0 && (
+            <>
+              <Participants
+                participants={participants}
+                removeParticipants={removeParticipant}
+              />
+            </>
+          )}
         </ModalBody>
 
         <ModalFooter>
