@@ -8,9 +8,9 @@ interface IChatProps {}
 
 const Chat: React.FunctionComponent<IChatProps> = (props) => {
   return (
-    <Flex height="100vh" border="1px solid red">
-     <ConversationsWrapper />
-     <FeedsWrapper/>
+    <Flex height="100vh">
+      <ConversationsWrapper />
+      <FeedsWrapper />
     </Flex>
   );
 };
