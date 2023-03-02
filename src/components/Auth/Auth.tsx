@@ -49,7 +49,7 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
               value={username}
               onChange={(event) => setUserName(event.target.value)}
             ></Input>
-            <Button onClick={onSubmit} width="100%">
+            <Button onClick={onSubmit} isLoading={loading} width="100%">
               save
             </Button>
           </>
