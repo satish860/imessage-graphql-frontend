@@ -15,7 +15,6 @@ export default NextAuth({
   callbacks:{
     async session({ session, user, token }) {
       const sessionUser = { ...session.user, ...user };
-      console.log(sessionUser)
       return Promise.resolve({
         ...session,
         user: sessionUser,
